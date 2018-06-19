@@ -122,5 +122,41 @@ eg：wc -l The_Holy_Bible.txt  统计《圣经》行数(32432)。
 ```
 # 14.iconv
 ```
-
+iconv  汉字编码转换。
+iconv -f, 名称原始文本编码 -t, 名称输出编码
+eg：iconv -f gb2312 -t utf-8 wintang.txt  将 wintang.txt 中的 gb2312 编码方式格式为 utf-8 编码格式。
+eg：iconv -f gb2312 -t utf-8 wintang.txt > hanzitang
+注：vim tang  创建一个 tang 文件，然后在其中写入一个“烫”汉字，保存。
+注：Linux和Windows汉字编码不同，Windows一个汉字两个字节，Linux下为三个。
+注：ls -l  查看详细信息，发现 tang 文件占用四个字节
+注：打开 tang 输入 ":%!xxd" 转换为16进制，显示 "00000000: e783 ab0a"，说明系统自动生成了一个换行符。
+注：网页上使用utf-8，三个字节表示一个汉字，微软使用 gdk gb2132，两个字节表示一个汉字
+注：在Windows下新建一个 wintang.txt ，里面写入一个“烫”，复制进Linux系统。
+注：vim wintang.txt  输入 ":%!xxd" 转换为16进制，显示 "00000000: cccc 0a" 。
+注：编辑器需提前适配 utf-8 和 gdk ，否则打开会出现乱码(两个小竖着的矩形框)。
+注：ls -l hanzitang  成功显示三个字节。
+```
+# 15.grep
+```
+grep [选项] [查找模式] [文件名1，文件名2，…]  grep 过滤器查找指定字符模式的文件，并显示含有此模式的所有行。
+grep ^ :以什么开头，例如ls –l | grep ^d 显示当前目录下的所有子目录的详细信息。
+grep $ :以什么结尾。例如ls –l | grep c$ 显示当前目录下以c 结尾的文件。
+常用的参数：
+grep -F 每个模式作为固定的字符串对待
+grep -c 只显示匹配行的数量。
+grep -i 比较式不区分大小写。
+grep -n 在输出前加上匹配串所在的行号。
+eg：grep God The_Holy_Bible.txt  将《圣经》中出现 "God" 的行打印出来。
+eg：find /usr/include/ -name stdio.h|xargs grep FILE  在 include 目录内查找所有 stdio.h 头文件中所有出现的 "FILE" 字符串。
+eg：grep God -n The_Holy_Bible.txt  输出所有 "God" 出现的行内容，并在输出前加上匹配串所在的行号。
+eg：grep God -c The_Holy_Bible.txt  只显示出现 "God" 行的数目。
+注：匹配串与查找模式顺序可以颠倒，上式可写为 "grep -c God The_Holy_Bible.txt" 。
+eg：grep h.* name2  显示所有出现 "h" 的行，并将 "h" 之后的内容全部标红。
+eg：grep h.*a name2  显示所有出现 "h" 起始，"a" 结束的字符串所在行内容。 
+eg：grep h.n name2  显示所有形如 "h?n" (?代表任意一个字符) 的字符串所在行内容。
+eg：grep li[a-z] name2
+eg：grep "^\ " main.c  显示 main.c 中以空格起始的行。
+eg：grep ";$" main.c  显示 main.c 中以";"结束的行。  
+eg：grep -F ^ file  显示 file 中出现 "^" 的行。
+eg：grep -i hua name2  不区分大小写，显示 name2 中出现 "hua" 的行。
 ```
