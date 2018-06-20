@@ -160,3 +160,24 @@ eg：grep ";$" main.c  显示 main.c 中以";"结束的行。
 eg：grep -F ^ file  显示 file 中出现 "^" 的行。
 eg：grep -i hua name2  不区分大小写，显示 name2 中出现 "hua" 的行。
 ```
+# 15. |
+```
+|  管道是重定向的一种，就像一个导管一样，将一个程序或命令的输出作为另一个程序或命令的输入。
+eg：ls |wc-l  显示当前目录文件数目，当前目录也算一个。
+eg：ls -l|wc-l  显示当前目录文件数目，数量比上面少一个。
+```
+# 15.tar
+```
+tar [主选项+辅选项] [目标文档] [源文件或目录]  为文件和目录创建档案，便于压缩。
+c：创建新的档案文件。
+r: 要把存档的文件追加到档案文件的末尾。tar rf *.tar test
+x：从档案文件中释放文件。
+f：使用档案文件或设备。
+v：在归档过程中显示处理的文件。
+z：用gzip 来压缩/解压缩文件，后缀名为.gz，加上该选项后可以将档案文件进行压缩。
+eg：tar cvf package.tar file*  
+eg：tar rf package.tar hanzi1 main.c
+eg：tar xf package.tar
+eg：tar cvfz compress.tar.gz file* main.c hanzi1
+eg：gzip package.tar
+```
