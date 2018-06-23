@@ -151,7 +151,7 @@ SOURCES = $(wildcard *.cpp) 把当前目录下所有 ".cpp" 文件存入变量 S
 这样，我们就把多个 .c 编译成一个可执行二进制。
 注：一个可执行二进制并不等价于一个进程，二者无内在联系
 
-# 2.文件操作
+# 2.基于文件指针的文件操作
 基于文件指针的文件操作，就是标准C
 linux 中对目录和设备的操作都是文件操作，文件分为普通文件，目录文件，链接文件和设备文件。
 打开文件模式 ab+ 与 rb+ 的区别
@@ -285,7 +285,7 @@ int main(int argc,char **argv){
     return 0;  
 }
 ```
-一些命令和接口函数名字一样的，是系统调用。
+一些命令和接口函数名字一样的，是用了系统调用。
 写一个 mkdir.c 
 ```.c
 #include "func.h"                                                              
@@ -314,7 +314,7 @@ int main(int argc,char **argv){
     return 0;
 }
 ```
-其中，头文件 func.c
+其中，头文件 func.h
 ```.c
 #include <stdio.h>                                                             
 #include <sys/stat.h>
