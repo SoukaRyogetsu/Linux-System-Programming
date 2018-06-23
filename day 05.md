@@ -16,9 +16,8 @@ int main(int argc,char **argv){
     return 0;  
 }
 
-#include <sys/types.h> //头文件
-#include <sys/stat.h>
-#include <fcntl.h>
+#include <fcntl.h>  //open
+#include <unistd.h>  //close所需头文件
 int open(const char *pathname, int flags); //文件名打开方式  
 int open(const char *pathname, int flags, mode_t mode);//文件名打开方式权限  
 flags 和 mode 都是一组掩码的合成值，flags 表示打开或创建的方式，mode 表示文件的访问权限。  
@@ -143,7 +142,6 @@ time_t st_ctime; /* 最后权限修改时间*/
 #include "func.h"                                                                            
 int main(int argc,char **argv){
     int fd=open(argv[1],O_RDWR|O_CREAT,0664);
-    printf("fd=%d\n",fd);
     char *p; 
     p=(char*)mmap(NULL,5,PROT_READ|PROT_WRITE,MAP_SHARED,fd,0);
     if((char*)-1==p){
@@ -153,6 +151,7 @@ int main(int argc,char **argv){
     printf("p[0]=%c\n",p[0]);
     p[0]='H';
     munmap(p,5);
+    close(fd);
     return 0;
 }
 
@@ -200,7 +199,79 @@ int dup2(int oldfd, int newfd);
 文件描述符的复制是指用另外一个文件描述符指向同一个打开的文件，它完全不同于直接给文件描
 述符变量赋值
 ```
-## 8.pipe
+## 8.pipe &select
 ```.c
-mkfifo 1pipe 建立一个管道
+mkfifo 1.pipe 建立两个管道
+mkfifo 2.pipe
+//talk1
+#include "func.h"  
+int main(int argc,char **argv){
+    int fdr=open(argv[1],O_RDONLY);
+    int fdw=open(argv[2],O_WRONLY);
+    char buf[128]={0};
+    int rt1,rt2;
+    fd_set set;//就是一个数组
+    while(1){
+        FD_ZERO(&set);//清空set
+        FD_SET(STDIN_FILENO,&set);
+        FD_SET(fdr,&set);
+        rt1=select(fdr+1,&set,NULL,NULL,NULL);
+        if(rt1>0){
+            if(FD_ISSET(fdr,&set)){
+                memset(buf,0,sizeof(buf));
+                rt2=read(fdr,buf,sizeof(buf));
+                if(rt2==0){
+                    printf("gun\n");
+                    break;
+                }
+                printf("%s\n",buf);
+            }
+            if(FD_ISSET(STDIN_FILENO,&set)){
+                memset(buf,0,sizeof(buf));
+                read(STDIN_FILENO,buf,sizeof(buf));
+                write(fdw,buf,strlen(buf)-1);
+            }
+        }
+    }
+    close(fdr);
+    close(fdw);
+    return 0;
+}  
+
+//talk2
+#include "func.h"  
+int main(int argc,char **argv){    
+    int fdw=open(argv[1],O_WRONLY);
+    int fdr=open(argv[2],O_RDONLY);
+    char buf[128]={0};
+    int rt1,rt2;
+    fd_set set;
+    while(1){
+        FD_ZERO(&set);
+        FD_SET(STDIN_FILENO,&set);
+        FD_SET(fdr,&set);
+        rt1=select(fdr+1,&set,NULL,NULL,NULL);
+        if(rt2>0){
+            if(FD_ISSET(fdr,&set)){
+                memset(buf,0,sizeof(buf));
+                rt2=read(fdr,buf,sizeof(buf));
+                if(rt2==0){
+                    printf("gun");
+                    break;
+                }
+                printf("%s\n",buf);
+            }
+            if(FD_ISSET(STDIN_FILENO,&set)){
+                memset(buf,0,sizeof(buf));
+                read(0,buf,sizeof(buf));
+                write(fdw,buf,strlen(buf)-1);
+            }
+        }
+    }
+    close(fdr);
+    close(fdw);
+    return 0;
+}
+
+还没学完，之后再补
 ```
